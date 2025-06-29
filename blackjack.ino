@@ -294,6 +294,24 @@ char charLookup[13] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K
 
 long prevButtonPress = 0;
 
+const unsigned char PROGMEM clubBitmap[] = {
+    B00000001, B10000000,
+    B00000011, B11000000,
+    B00000111, B11100000,
+    B00001111, B11110000,
+    B00001111, B11110000,
+    B00000111, B11100000,
+    B00111011, B11011100,
+    B01111101, B10111110,
+    B11111111, B11111111,
+    B11111111, B11111111,
+    B11111111, B11111111,
+    B01111101, B10111110,
+    B00111011, B11011100,
+    B00000111, B11100000,
+    B00001111, B11110000,
+    B00001111, B11110000
+};
 
 void setup() {
     pinMode(pinA, INPUT_PULLUP);
@@ -304,8 +322,6 @@ void setup() {
     Serial.begin(9600);
 
     display.begin(SH1106_SWITCHCAPVCC, 0x3C);
-
-    display.setTextColor(WHITE);
 
     showTitleScreen();
 
@@ -404,10 +420,10 @@ void setUpNewHand() {
         }
 
         if (bankroll.currentBet < 1) {
-                bankroll.currentBet = 1;
+            bankroll.currentBet = 1;
         }
         else if (bankroll.currentBet > bankroll.cash) {
-                bankroll.currentBet = bankroll.cash;
+            bankroll.currentBet = bankroll.cash;
         }
 
         betText.drawText(bankroll.currentBet);
@@ -550,6 +566,8 @@ void drawStaticGraphics() {
     display.setCursor(0, 56);
     display.print("Bank:");
 
+    display.drawBitmap(112, 47, clubBitmap, 16, 16, WHITE);
+
     display.display();
 }
 
@@ -623,13 +641,14 @@ void showDoubleDownAlert() {
 void showTitleScreen() {
     display.clearDisplay();
 
+    display.drawLine(0, 52, 127, 52, WHITE);
+
+    display.setTextColor(WHITE);
     display.setTextSize(2);
     display.setCursor(13, 5);
     display.print(F("Blackjack"));
 
     display.setTextSize(1);
-    display.setCursor(17, 30);
-    display.print(F("Press any button"));
 
     display.setCursor(0, 56);
     display.print(F("Bet-"));
@@ -643,13 +662,28 @@ void showTitleScreen() {
     display.setCursor(110, 56);
     display.print(F("Hit"));
 
-    display.drawLine(0, 52, 127, 52, WHITE);
-
-    display.display();
+    uint16_t titleCounter = 0;
 
     while (digitalRead(pinA) != 0 && digitalRead(pinB) != 0 && digitalRead(pinC) != 0 && digitalRead(pinD) != 0) {
         delay(20);
+
+        display.setCursor(17, 30);
+
+        if (titleCounter % 80 == 0) {
+            display.setTextColor(WHITE);
+            display.print(F("Press any button"));
+            display.display();
+        }
+        else if (titleCounter % 40 == 0) {
+            display.setTextColor(BLACK);
+            display.print(F("Press any button"));
+            display.display();
+        }
+
+        titleCounter += 1;
     }
+
+    display.setTextColor(WHITE);
 }
 
 
