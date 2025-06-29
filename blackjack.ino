@@ -43,7 +43,8 @@ void TextArea::drawText(int num) {
         display.setTextSize(textSize);
         display.print(String(num));
         display.display();
-        prevNum = -99;
+
+        prevNum = num;
     }
 }
 
@@ -51,6 +52,8 @@ void TextArea::drawText(int num) {
 void TextArea::clearText() {
     display.fillRect(x, y, width, height, BLACK);
     display.display();
+
+    prevNum = -99;
 }
 
 
