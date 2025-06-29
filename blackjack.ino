@@ -178,8 +178,6 @@ public:
     int getMinimumHandValue();
 
     int getBestHandValue();
-
-    bool checkForBlackjack();
 };
 
 
@@ -266,34 +264,6 @@ int Hand::getBestHandValue() {
 }
 
 
-bool Hand::checkForBlackjack() {
-    char firstTwoCards[2] = {cards[0]->value, cards[1]->value};
-
-    bool acePresent = false;
-
-    if (firstTwoCards[0] == 'A' || firstTwoCards[1] == 'A') {
-        acePresent = true;
-    }
-
-    bool tenPresent = false;
-
-    char tenCards[4] = {'T', 'J', 'Q', 'K'};
-
-    for (uint8_t i = 0; i < 4; ++i) {
-        if (firstTwoCards[0] == tenCards[i] || firstTwoCards[1] == tenCards[i]) {
-            tenPresent = true;
-        }
-    }
-
-    if (acePresent && tenPresent) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
-
 Card* playerCard1 = new Card(49, true);
 Card* playerCard2 = new Card(37, true);
 Card* playerCard3 = new Card(25, false);
@@ -351,6 +321,8 @@ void loop() {
     setUpNewHand();
 
     playHand();
+
+    delay(2000);
 
     if (bankroll.cash <= 0) {
         showGameOverScreen();
@@ -461,24 +433,24 @@ void setUpNewHand() {
 void playHand() {
     bool playerBlackjack = false;
 
-    if (playerHand.checkForBlackjack()) {
+    if (playerHand.getBestHandValue() == 21) {
         playerBlackjack = true;
 
         playerHand.handActive = false;
 
-        showBlackjackAlert(2, 5);
+        showBlackjackAlert('P');
     }
 
     bool dealerBlackjack = false;
 
-    if (dealerHand.checkForBlackjack()) {
+    if (dealerHand.getBestHandValue() == 21) {
         dealerBlackjack = true;
 
         playerHand.handActive = false;
 
         dealerCard2->flipDownCard();
 
-        showBlackjackAlert(107, 5);
+        showBlackjackAlert('D');
 
         dealerScoreText.drawText(21);
     }
@@ -563,8 +535,6 @@ void playHand() {
     }
 
     bankroll.cash += bankroll.getBetReturn(bankroll.currentBet + doubleDownBet, playerScore, dealerScore);
-
-    delay(2000);
 }
 
 
@@ -603,9 +573,18 @@ void drawCardGraphics() {
 }
 
 
-void showBlackjackAlert(int x, int y) {
-    display.fillRect(x, y, 18, 8, BLACK);
-    display.setCursor(x, y);
+void showBlackjackAlert(char side) {
+    int x;
+
+    if (side == 'P') {
+        x = 2;
+    }
+    else {
+        x = 107;
+    }
+
+    display.fillRect(x, 5, 18, 8, BLACK);
+    display.setCursor(x, 5);
     display.setTextSize(1);
     display.print("BJ!");
     display.display();
@@ -618,7 +597,7 @@ void showBlackjackAlert(int x, int y) {
 
     delay(500);
 
-    display.fillRect(x, y, 18, 8, BLACK);
+    display.fillRect(x, 5, 18, 8, BLACK);
     display.display();
 }
 
