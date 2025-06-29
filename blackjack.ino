@@ -13,281 +13,281 @@ Adafruit_SH1106 display(-1);
 
 class TextArea {
 public:
-  int x;
-  int y;
+    int x;
+    int y;
 
-  int width;
-  int height;
+    int width;
+    int height;
 
-  int textSize;
-  int prevNum = -99;
+    int textSize;
+    int prevNum = -99;
 
-  TextArea(int xPos, int yPos, int w, int h, int size) {
-    x = xPos;
-    y = yPos;
-    width = w;
-    height = h;
-    textSize = size;
-  }
+    TextArea(int xPos, int yPos, int w, int h, int size) {
+        x = xPos;
+        y = yPos;
+        width = w;
+        height = h;
+        textSize = size;
+    }
 
-  void drawText(int num);
+    void drawText(int num);
 
-  void clearText();
+    void clearText();
 };
 
 
 void TextArea::drawText(int num) {
-  if (num != prevNum) {
-    display.fillRect(x, y, width, height, BLACK);
-    display.setCursor(x, y);
-    display.setTextSize(textSize);
-    display.print(String(num));
-    display.display();
-    prevNum = -99;
-  }
+    if (num != prevNum) {
+        display.fillRect(x, y, width, height, BLACK);
+        display.setCursor(x, y);
+        display.setTextSize(textSize);
+        display.print(String(num));
+        display.display();
+        prevNum = -99;
+    }
 }
 
 
 void TextArea::clearText() {
-  display.fillRect(x, y, width, height, BLACK);
-  display.display();
+    display.fillRect(x, y, width, height, BLACK);
+    display.display();
 }
 
 
 class Bankroll {
 public:
-  int cash = 20;
-  int currentBet = 1;
+    int cash = 20;
+    int currentBet = 1;
 
-  int getBetReturn(int betSize, int scorePlayer, int scoreDealer);
+    int getBetReturn(int betSize, int scorePlayer, int scoreDealer);
 };
 
 
 int Bankroll::getBetReturn(int betSize, int scorePlayer, int scoreDealer) {
-  if (scorePlayer == 100 && scoreDealer == 100) {
+    if (scorePlayer == 100 && scoreDealer == 100) {
+        return 0;
+    }
+    else if (scorePlayer == 100) {
+        return betSize * 2;
+    }
+    else if (scoreDealer == 100) {
+        return betSize * -1;
+    }
+    else if (scorePlayer == 99) {
+        return betSize;
+    }
+    else if (scorePlayer > 21) {
+        return betSize * -1;
+    }
+    else if (scoreDealer > 21) {
+        return betSize;
+    }
+    else if (scorePlayer == scoreDealer) {
+        return 0;
+    }
+    else if (21 - scorePlayer < 21 - scoreDealer) {
+        return betSize;
+    }
+    else if (21 - scoreDealer < 21 - scorePlayer) {
+        return betSize * -1;
+    }
     return 0;
-  }
-  else if (scorePlayer == 100) {
-    return betSize * 2;
-  }
-  else if (scoreDealer == 100) {
-    return betSize * -1;
-  }
-  else if (scorePlayer == 99) {
-    return betSize;
-  }
-  else if (scorePlayer > 21) {
-    return betSize * -1;
-  }
-  else if (scoreDealer > 21) {
-    return betSize;
-  }
-  else if (scorePlayer == scoreDealer) {
-    return 0;
-  }
-  else if (21 - scorePlayer < 21 - scoreDealer) {
-    return betSize;
-  }
-  else if (21 - scoreDealer < 21 - scorePlayer) {
-    return betSize * -1;
-  }
-  return 0;
 }
 
 
 class Card {
 public:
-  int x;
-  int y = -16;
-  int yPrev = -16;
+    int x;
+    int y = -16;
+    int yPrev = -16;
 
-  int width = 9;
-  int height = 15;
+    int width = 9;
+    int height = 15;
 
-  char value = 'A';
-  bool dealt;
-  bool faceDown = false;
+    char value = 'A';
+    bool dealt;
+    bool faceDown = false;
 
-  Card(int xPos, bool isDealt) {
-    x = xPos;
-    dealt = isDealt;
-  }
+    Card(int xPos, bool isDealt) {
+        x = xPos;
+        dealt = isDealt;
+    }
 
-  void displayCard();
+    void displayCard();
 
-  void flipDownCard();
+    void flipDownCard();
 };
 
 
 void Card::displayCard() {
-  if (dealt && y < 5) {
-    y += 1;
-  }
-  else if (dealt) {
-    y = 5;
-  }
-  else {
-    y = -16;
-  }
-
-  if (y != yPrev) {
-    display.fillRect(x, yPrev, width, height, BLACK);
-
-    if (!faceDown) {
-      display.drawRect(x, y, width, height, WHITE);
-      display.drawChar(x + 2, y + 4, value, WHITE, BLACK, 1);
+    if (dealt && y < 5) {
+        y += 1;
+    }
+    else if (dealt) {
+        y = 5;
     }
     else {
-      display.fillRect(x, y, width, height, WHITE);
+        y = -16;
     }
 
-    display.display();
+    if (y != yPrev) {
+        display.fillRect(x, yPrev, width, height, BLACK);
 
-    yPrev = y;
-  }
+        if (!faceDown) {
+            display.drawRect(x, y, width, height, WHITE);
+            display.drawChar(x + 2, y + 4, value, WHITE, BLACK, 1);
+        }
+        else {
+            display.fillRect(x, y, width, height, WHITE);
+        }
+
+        display.display();
+
+        yPrev = y;
+    }
 }
 
 
 void Card::flipDownCard() {
-  faceDown = false;
+    faceDown = false;
 
-  display.fillRect(x, y, width, height, BLACK);
-  display.drawRect(x, y, width, height, WHITE);
-  display.drawChar(x + 2, y + 4, value, WHITE, BLACK, 1);
-  display.display();
+    display.fillRect(x, y, width, height, BLACK);
+    display.drawRect(x, y, width, height, WHITE);
+    display.drawChar(x + 2, y + 4, value, WHITE, BLACK, 1);
+    display.display();
 }
 
 
 class Hand {
 public:
-  int cardsDealt = 2;
-  bool handActive = false;
-  Card* cards[5];
+    int cardsDealt = 2;
+    bool handActive = false;
+    Card* cards[5];
 
-  Hand(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5) {
-    cards[0] = c1;
-    cards[1] = c2;
-    cards[2] = c3;
-    cards[3] = c4;
-    cards[4] = c5;
-  }
+    Hand(Card* c1, Card* c2, Card* c3, Card* c4, Card* c5) {
+        cards[0] = c1;
+        cards[1] = c2;
+        cards[2] = c3;
+        cards[3] = c4;
+        cards[4] = c5;
+    }
 
-  int getMinimumHandValue();
+    int getMinimumHandValue();
 
-  int getBestHandValue();
+    int getBestHandValue();
 
-  bool checkForBlackjack();
+    bool checkForBlackjack();
 };
 
 
 int Hand::getMinimumHandValue() {
-  int total = 0;
+    int total = 0;
 
-  for (uint8_t i = 0; i < cardsDealt; ++i) {
-    switch(cards[i]->value) {
-      case '2': total += 2; break;
-      case '3': total += 3; break;
-      case '4': total += 4; break;
-      case '5': total += 5; break;
-      case '6': total += 6; break;
-      case '7': total += 7; break;
-      case '8': total += 8; break;
-      case '9': total += 9; break;
-      case 'T': total += 10; break;
-      case 'J': total += 10; break;
-      case 'Q': total += 10; break;
-      case 'K': total += 10; break;
-      case 'A': total += 1; break;
-      default: break;
+    for (uint8_t i = 0; i < cardsDealt; ++i) {
+        switch(cards[i]->value) {
+            case '2': total += 2; break;
+            case '3': total += 3; break;
+            case '4': total += 4; break;
+            case '5': total += 5; break;
+            case '6': total += 6; break;
+            case '7': total += 7; break;
+            case '8': total += 8; break;
+            case '9': total += 9; break;
+            case 'T': total += 10; break;
+            case 'J': total += 10; break;
+            case 'Q': total += 10; break;
+            case 'K': total += 10; break;
+            case 'A': total += 1; break;
+            default: break;
+        }
     }
-  }
 
-  return total;
+    return total;
 }
 
 
 int Hand::getBestHandValue() {
-  int fixedTotal = 0;
-  int aceCount = 0;
+    int fixedTotal = 0;
+    int aceCount = 0;
 
-  for (uint8_t i = 0; i < cardsDealt; ++i) {
-    if (cards[i]->value != 'A') {
-      switch(cards[i]->value) {
-        case '2': fixedTotal += 2; break;
-        case '3': fixedTotal += 3; break;
-        case '4': fixedTotal += 4; break;
-        case '5': fixedTotal += 5; break;
-        case '6': fixedTotal += 6; break;
-        case '7': fixedTotal += 7; break;
-        case '8': fixedTotal += 8; break;
-        case '9': fixedTotal += 9; break;
-        case 'T': fixedTotal += 10; break;
-        case 'J': fixedTotal += 10; break;
-        case 'Q': fixedTotal += 10; break;
-        case 'K': fixedTotal += 10; break;
-        default: break;
-      }
+    for (uint8_t i = 0; i < cardsDealt; ++i) {
+        if (cards[i]->value != 'A') {
+            switch(cards[i]->value) {
+                case '2': fixedTotal += 2; break;
+                case '3': fixedTotal += 3; break;
+                case '4': fixedTotal += 4; break;
+                case '5': fixedTotal += 5; break;
+                case '6': fixedTotal += 6; break;
+                case '7': fixedTotal += 7; break;
+                case '8': fixedTotal += 8; break;
+                case '9': fixedTotal += 9; break;
+                case 'T': fixedTotal += 10; break;
+                case 'J': fixedTotal += 10; break;
+                case 'Q': fixedTotal += 10; break;
+                case 'K': fixedTotal += 10; break;
+                default: break;
+            }
+        }
+        else {
+            aceCount += 1;
+        }
     }
-    else {
-      aceCount += 1;
+
+    int possibleValues[6] = {0, 0, 0, 0, 0, 0};
+
+    for (uint8_t a = 0; a < 6; ++a) {
+        if (a == aceCount) {
+            for (uint8_t i = 0; i < a + 1; ++i) {
+                possibleValues[i] = fixedTotal + a + (i * 10);
+            }
+        }
     }
-  }
 
-  int possibleValues[6] = {0, 0, 0, 0, 0, 0};
-
-  for (int a = 0; a < 6; ++a) {
-    if (a == aceCount) {
-      for (uint8_t i = 0; i < a + 1; ++i) {
-        possibleValues[i] = fixedTotal + a + (i * 10);
-      }
+    for (uint8_t score = 21; score >= 2; --score) {
+        for (uint8_t i = 0; i < 6; ++i) {
+            if (possibleValues[i] == score) {
+                return score;
+            }
+        }
     }
-  }
 
-  for (int score = 21; score >= 2; --score) {
-    for (uint8_t i = 0; i < 6; ++i) {
-      if (possibleValues[i] == score) {
-        return score;
-      }
+    for (uint8_t score = 22; score <= 55; ++score) {
+        for (uint8_t i = 0; i < 6; ++i) {
+            if (possibleValues[i] == score) {
+                return score;
+            }
+        }
     }
-  }
 
-  for (int score = 22; score <= 55; ++score) {
-    for (uint8_t i = 0; i < 6; ++i) {
-      if (possibleValues[i] == score) {
-        return score;
-      }
-    }
-  }
-
-  return 0;
+    return 0;
 }
 
 
 bool Hand::checkForBlackjack() {
-  char firstTwoCards[2] = {cards[0]->value, cards[1]->value};
+    char firstTwoCards[2] = {cards[0]->value, cards[1]->value};
 
-  bool acePresent = false;
+    bool acePresent = false;
 
-  if (firstTwoCards[0] == 'A' || firstTwoCards[1] == 'A') {
-    acePresent = true;
-  }
-
-  bool tenPresent = false;
-
-  char tenCards[4] = {'T', 'J', 'Q', 'K'};
-
-  for (uint8_t i = 0; i < 4; ++i) {
-    if (firstTwoCards[0] == tenCards[i] || firstTwoCards[1] == tenCards[i]) {
-      tenPresent = true;
+    if (firstTwoCards[0] == 'A' || firstTwoCards[1] == 'A') {
+        acePresent = true;
     }
-  }
 
-  if (acePresent && tenPresent) {
-    return true;
-  }
-  else {
-    return false;
-  }
+    bool tenPresent = false;
+
+    char tenCards[4] = {'T', 'J', 'Q', 'K'};
+
+    for (uint8_t i = 0; i < 4; ++i) {
+        if (firstTwoCards[0] == tenCards[i] || firstTwoCards[1] == tenCards[i]) {
+            tenPresent = true;
+        }
+    }
+
+    if (acePresent && tenPresent) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 
@@ -323,380 +323,380 @@ long prevButtonPress = 0;
 
 
 void setup() {
-  pinMode(pinA, INPUT_PULLUP);
-  pinMode(pinB, INPUT_PULLUP);
-  pinMode(pinC, INPUT_PULLUP);
-  pinMode(pinD, INPUT_PULLUP);
+    pinMode(pinA, INPUT_PULLUP);
+    pinMode(pinB, INPUT_PULLUP);
+    pinMode(pinC, INPUT_PULLUP);
+    pinMode(pinD, INPUT_PULLUP);
 
-  Serial.begin(9600);
+    Serial.begin(9600);
 
-  display.begin(SH1106_SWITCHCAPVCC, 0x3C);
+    display.begin(SH1106_SWITCHCAPVCC, 0x3C);
 
-  display.setTextColor(WHITE);
+    display.setTextColor(WHITE);
 
-  showTitleScreen();
+    showTitleScreen();
 
-  drawStaticGraphics();
+    drawStaticGraphics();
 
-  randomSeed(millis());
+    randomSeed(millis());
 
-  prevButtonPress = millis();
+    prevButtonPress = millis();
 }
 
 
 void loop() {
-  setUpNewHand();
+    setUpNewHand();
 
-  playHand();
+    playHand();
 
-  if (bankroll.cash <= 0) {
-    showGameOverScreen();
-  }
+    if (bankroll.cash <= 0) {
+        showGameOverScreen();
+    }
 }
 
 
 void setUpNewHand() {
-  playerScoreText.clearText();
+    playerScoreText.clearText();
 
-  dealerScoreText.clearText();
+    dealerScoreText.clearText();
 
-  bankrollText.drawText(bankroll.cash);
+    bankrollText.drawText(bankroll.cash);
 
-  for (uint8_t i = 0; i < 5; ++i) {
-    playerHand.cards[i]->value = charLookup[random(13)];
-  }
-
-  playerHand.cardsDealt = 2;
-
-  for (uint8_t i = 0; i < 5; ++i) {
-    playerHand.cards[i]->dealt = false;
-  }
-
-  for (uint8_t i = 0; i < 5; ++i) {
-    dealerHand.cards[i]->value = charLookup[random(13)];
-  }
-
-  dealerHand.cardsDealt = 2;
-
-  for (uint8_t i = 0; i < 5; ++i) {
-    dealerHand.cards[i]->dealt = false;
-  }
-
-  dealerCard2->faceDown = true;
-
-  drawCardGraphics();
-
-  if (bankroll.currentBet > bankroll.cash) {
-    bankroll.currentBet = bankroll.cash;
-  }
-
-  int betStepSize = 1;
-
-  if (bankroll.cash >= 250) {
-    betStepSize = 10;
-  }
-  else if (bankroll.cash >= 100) {
-    betStepSize = 5;
-  }
-  else if (bankroll.cash >= 50) {
-    betStepSize = 2;
-  }
-
-  while (!playerHand.handActive) {
-    if (digitalRead(pinA) == 0 && millis() - prevButtonPress > 250) {
-      prevButtonPress = millis();
-
-      if (bankroll.currentBet % betStepSize == 0) {
-        bankroll.currentBet -= betStepSize;
-      }
-      else {
-        while (bankroll.currentBet % betStepSize != 0) {
-          bankroll.currentBet -= 1;
-        }
-      }
-    }
-    else if (digitalRead(pinB) == 0 && millis() - prevButtonPress > 250) {
-      prevButtonPress = millis();
-
-      if (bankroll.currentBet % betStepSize == 0) {
-        bankroll.currentBet += betStepSize;
-      }
-      else {
-        while (bankroll.currentBet % betStepSize != 0) {
-          bankroll.currentBet += 1;
-        }
-      }
+    for (uint8_t i = 0; i < 5; ++i) {
+        playerHand.cards[i]->value = charLookup[random(13)];
     }
 
-    if (bankroll.currentBet < 1) {
-        bankroll.currentBet = 1;
+    playerHand.cardsDealt = 2;
+
+    for (uint8_t i = 0; i < 5; ++i) {
+        playerHand.cards[i]->dealt = false;
     }
-    else if (bankroll.currentBet > bankroll.cash) {
+
+    for (uint8_t i = 0; i < 5; ++i) {
+        dealerHand.cards[i]->value = charLookup[random(13)];
+    }
+
+    dealerHand.cardsDealt = 2;
+
+    for (uint8_t i = 0; i < 5; ++i) {
+        dealerHand.cards[i]->dealt = false;
+    }
+
+    dealerCard2->faceDown = true;
+
+    drawCardGraphics();
+
+    if (bankroll.currentBet > bankroll.cash) {
         bankroll.currentBet = bankroll.cash;
     }
 
-    betText.drawText(bankroll.currentBet);
+    int betStepSize = 1;
 
-    if (digitalRead(pinD) == 0) {
-      prevButtonPress = millis();
-      playerHand.handActive = true;
+    if (bankroll.cash >= 250) {
+        betStepSize = 10;
     }
-  }
+    else if (bankroll.cash >= 100) {
+        betStepSize = 5;
+    }
+    else if (bankroll.cash >= 50) {
+        betStepSize = 2;
+    }
 
-  for (uint8_t i = 0; i < 2; ++i) {
-    playerHand.cards[i]->dealt = true;
-    playerHand.cards[i]->y = 0;
-  }
+    while (!playerHand.handActive) {
+        if (digitalRead(pinA) == 0 && millis() - prevButtonPress > 250) {
+            prevButtonPress = millis();
 
-  for (uint8_t i = 0; i < 2; ++i) {
-    dealerHand.cards[i]->dealt = true;
-    dealerHand.cards[i]->y = 0;
-  }
+            if (bankroll.currentBet % betStepSize == 0) {
+                bankroll.currentBet -= betStepSize;
+            }
+            else {
+                while (bankroll.currentBet % betStepSize != 0) {
+                    bankroll.currentBet -= 1;
+                }
+            }
+        }
+        else if (digitalRead(pinB) == 0 && millis() - prevButtonPress > 250) {
+            prevButtonPress = millis();
+
+            if (bankroll.currentBet % betStepSize == 0) {
+                bankroll.currentBet += betStepSize;
+            }
+            else {
+                while (bankroll.currentBet % betStepSize != 0) {
+                    bankroll.currentBet += 1;
+                }
+            }
+        }
+
+        if (bankroll.currentBet < 1) {
+                bankroll.currentBet = 1;
+        }
+        else if (bankroll.currentBet > bankroll.cash) {
+                bankroll.currentBet = bankroll.cash;
+        }
+
+        betText.drawText(bankroll.currentBet);
+
+        if (digitalRead(pinD) == 0) {
+            prevButtonPress = millis();
+            playerHand.handActive = true;
+        }
+    }
+
+    for (uint8_t i = 0; i < 2; ++i) {
+        playerHand.cards[i]->dealt = true;
+        playerHand.cards[i]->y = 0;
+    }
+
+    for (uint8_t i = 0; i < 2; ++i) {
+        dealerHand.cards[i]->dealt = true;
+        dealerHand.cards[i]->y = 0;
+    }
 }
 
 
 void playHand() {
-  bool playerBlackjack = false;
+    bool playerBlackjack = false;
 
-  if (playerHand.checkForBlackjack()) {
-    playerBlackjack = true;
+    if (playerHand.checkForBlackjack()) {
+        playerBlackjack = true;
 
-    playerHand.handActive = false;
+        playerHand.handActive = false;
 
-    showBlackjackAlert(2, 5);
-  }
-
-  bool dealerBlackjack = false;
-
-  if (dealerHand.checkForBlackjack()) {
-    dealerBlackjack = true;
-
-    playerHand.handActive = false;
-
-    dealerCard2->flipDownCard();
-
-    showBlackjackAlert(107, 5);
-
-    dealerScoreText.drawText(21);
-  }
-
-  int doubleDownBet = 0;
-
-  while (playerHand.handActive) {
-    drawCardGraphics();
-
-    // D Button: Hit
-    if (digitalRead(pinD) == 0 && millis() - prevButtonPress > 500) {
-      prevButtonPress = millis();
-
-      playerHand.cardsDealt += 1;
+        showBlackjackAlert(2, 5);
     }
 
-    // C Button: Stand
-    if (digitalRead(pinC) == 0 && millis() - prevButtonPress > 500) {
-      prevButtonPress = millis();
+    bool dealerBlackjack = false;
 
-      playerHand.handActive = false;
+    if (dealerHand.checkForBlackjack()) {
+        dealerBlackjack = true;
+
+        playerHand.handActive = false;
+
+        dealerCard2->flipDownCard();
+
+        showBlackjackAlert(107, 5);
+
+        dealerScoreText.drawText(21);
     }
 
-    // B Button: Double Down
-    if (digitalRead(pinB) == 0 && millis() - prevButtonPress > 500 && playerHand.cardsDealt == 2 && bankroll.cash - bankroll.currentBet * 2 >= 0) {
-      prevButtonPress = millis();
+    int doubleDownBet = 0;
 
-      doubleDownBet = bankroll.currentBet;
-
-      playerHand.cardsDealt += 1;
-
-      playerHand.handActive = false;
-
-      showDoubleDownAlert();
-    }
-
-    if (playerHand.getMinimumHandValue() >= 21 || playerHand.cardsDealt == 5) {
-      playerHand.handActive = false;
-
-      for (uint8_t i = 0; i < 23; ++i) {
+    while (playerHand.handActive) {
         drawCardGraphics();
-      }
+
+        // D Button: Hit
+        if (digitalRead(pinD) == 0 && millis() - prevButtonPress > 500) {
+            prevButtonPress = millis();
+
+            playerHand.cardsDealt += 1;
+        }
+
+        // C Button: Stand
+        if (digitalRead(pinC) == 0 && millis() - prevButtonPress > 500) {
+            prevButtonPress = millis();
+
+            playerHand.handActive = false;
+        }
+
+        // B Button: Double Down
+        if (digitalRead(pinB) == 0 && millis() - prevButtonPress > 500 && playerHand.cardsDealt == 2 && bankroll.cash - bankroll.currentBet * 2 >= 0) {
+            prevButtonPress = millis();
+
+            doubleDownBet = bankroll.currentBet;
+
+            playerHand.cardsDealt += 1;
+
+            playerHand.handActive = false;
+
+            showDoubleDownAlert();
+        }
+
+        if (playerHand.getMinimumHandValue() >= 21 || playerHand.getBestHandValue() == 21 || playerHand.cardsDealt == 5) {
+            playerHand.handActive = false;
+
+            for (uint8_t i = 0; i < 23; ++i) {
+                drawCardGraphics();
+            }
+        }
     }
-  }
 
-  int playerScore = playerHand.getBestHandValue();
+    int playerScore = playerHand.getBestHandValue();
 
-  playerScoreText.drawText(playerScore);
+    playerScoreText.drawText(playerScore);
 
-  if (playerBlackjack) {
-    playerScore = 100;
-  }
-  else if (playerHand.cardsDealt == 5 && playerScore <= 21) {
-    playerScore = 99;
-  }
-
-  delay(1000);
-
-  if (playerScore <= 21 && !dealerBlackjack) {
-    dealerCard2->flipDownCard();
-
-    while (dealerHand.getBestHandValue() < 17 && dealerHand.cardsDealt <= 4) {
-      delay(1500);
-
-      dealerHand.cardsDealt += 1;
-
-      for (uint8_t i = 0; i < 23; ++i) {
-        drawCardGraphics();
-      }
+    if (playerBlackjack) {
+        playerScore = 100;
+    }
+    else if (playerHand.cardsDealt == 5 && playerScore <= 21) {
+        playerScore = 99;
     }
 
-    dealerScoreText.drawText(dealerHand.getBestHandValue());
-  }
+    delay(1000);
 
-  int dealerScore = dealerHand.getBestHandValue();
+    if (playerScore <= 21 && !dealerBlackjack) {
+        dealerCard2->flipDownCard();
 
-  if (dealerBlackjack) {
-    dealerScore = 100;
-  }
-  else if (dealerHand.cardsDealt == 5 && dealerScore < 17) {
-    dealerScore = 0;
-  }
+        while (dealerHand.getBestHandValue() < 17 && dealerHand.cardsDealt <= 4) {
+            delay(1500);
 
-  bankroll.cash += bankroll.getBetReturn(bankroll.currentBet + doubleDownBet, playerScore, dealerScore);
+            dealerHand.cardsDealt += 1;
 
-  delay(2000);
+            for (uint8_t i = 0; i < 23; ++i) {
+                drawCardGraphics();
+            }
+        }
+
+        dealerScoreText.drawText(dealerHand.getBestHandValue());
+    }
+
+    int dealerScore = dealerHand.getBestHandValue();
+
+    if (dealerBlackjack) {
+        dealerScore = 100;
+    }
+    else if (dealerHand.cardsDealt == 5 && dealerScore < 17) {
+        dealerScore = 0;
+    }
+
+    bankroll.cash += bankroll.getBetReturn(bankroll.currentBet + doubleDownBet, playerScore, dealerScore);
+
+    delay(2000);
 }
 
 
 void drawStaticGraphics() {
-  display.clearDisplay();
+    display.clearDisplay();
 
-  display.drawLine(63, 0, 63, 63, WHITE);
+    display.drawLine(63, 0, 63, 63, WHITE);
 
-  display.setTextSize(1);
-  display.setCursor(0, 45);
-  display.print("Bet:");
+    display.setTextSize(1);
+    display.setCursor(0, 45);
+    display.print("Bet:");
 
-  display.setCursor(0, 56);
-  display.print("Bank:");
+    display.setCursor(0, 56);
+    display.print("Bank:");
 
-  display.display();
+    display.display();
 }
 
 
 void drawCardGraphics() {
-  if (playerHand.cardsDealt >= 3) { playerCard3->dealt = true; }
-  if (playerHand.cardsDealt >= 4) { playerCard4->dealt = true; }
-  if (playerHand.cardsDealt >= 5) { playerCard5->dealt = true; }
+    if (playerHand.cardsDealt >= 3) { playerCard3->dealt = true; }
+    if (playerHand.cardsDealt >= 4) { playerCard4->dealt = true; }
+    if (playerHand.cardsDealt >= 5) { playerCard5->dealt = true; }
 
-  for (uint8_t i = 0; i < 5; ++i) {
-    playerHand.cards[i]->displayCard();
-  }
+    for (uint8_t i = 0; i < 5; ++i) {
+        playerHand.cards[i]->displayCard();
+    }
 
-  if (dealerHand.cardsDealt >= 3) { dealerCard3->dealt = true; }
-  if (dealerHand.cardsDealt >= 4) { dealerCard4->dealt = true; }
-  if (dealerHand.cardsDealt >= 5) { dealerCard5->dealt = true; }
+    if (dealerHand.cardsDealt >= 3) { dealerCard3->dealt = true; }
+    if (dealerHand.cardsDealt >= 4) { dealerCard4->dealt = true; }
+    if (dealerHand.cardsDealt >= 5) { dealerCard5->dealt = true; }
 
-  for (uint8_t i = 0; i < 5; ++i) {
-    dealerHand.cards[i]->displayCard();
-  }
+    for (uint8_t i = 0; i < 5; ++i) {
+        dealerHand.cards[i]->displayCard();
+    }
 }
 
 
 void showBlackjackAlert(int x, int y) {
-  display.fillRect(x, y, 18, 8, BLACK);
-  display.setCursor(x, y);
-  display.setTextSize(1);
-  display.print("BJ!");
-  display.display();
+    display.fillRect(x, y, 18, 8, BLACK);
+    display.setCursor(x, y);
+    display.setTextSize(1);
+    display.print("BJ!");
+    display.display();
 
-  display.fillRect(dealerHand.cards[1]->x, 0, dealerHand.cards[1]->width, 1, BLACK);    // Clean up the top of dealer hole card rect.
+    display.fillRect(dealerHand.cards[1]->x, 0, dealerHand.cards[1]->width, 1, BLACK);    // Clean up the top of dealer hole card rect.
 
-  for (uint8_t i = 0; i < 6; ++i) {
-    drawCardGraphics();
-  }
+    for (uint8_t i = 0; i < 6; ++i) {
+        drawCardGraphics();
+    }
 
-  delay(500);
+    delay(500);
 
-  display.fillRect(x, y, 18, 8, BLACK);
-  display.display();
+    display.fillRect(x, y, 18, 8, BLACK);
+    display.display();
 }
 
 
 void showDoubleDownAlert() {
-  display.fillRect(33, 34, 12, 8, BLACK);
-  display.setCursor(33, 34);
-  display.setTextSize(1);
-  display.print("x2");
-  display.display();
+    display.fillRect(33, 34, 12, 8, BLACK);
+    display.setCursor(33, 34);
+    display.setTextSize(1);
+    display.print("x2");
+    display.display();
 
-  for (uint8_t i = 0; i < 23; ++i) {
-    drawCardGraphics();
-  }
+    for (uint8_t i = 0; i < 23; ++i) {
+        drawCardGraphics();
+    }
 
-  delay(500);
+    delay(500);
 
-  display.fillRect(33, 34, 12, 8, BLACK);
-  display.display();
+    display.fillRect(33, 34, 12, 8, BLACK);
+    display.display();
 }
 
 
 void showTitleScreen() {
-  display.clearDisplay();
+    display.clearDisplay();
 
-  display.setTextSize(2);
-  display.setCursor(13, 5);
-  display.print(F("Blackjack"));
+    display.setTextSize(2);
+    display.setCursor(13, 5);
+    display.print(F("Blackjack"));
 
-  display.setTextSize(1);
-  display.setCursor(17, 30);
-  display.print(F("Press any button"));
+    display.setTextSize(1);
+    display.setCursor(17, 30);
+    display.print(F("Press any button"));
 
-  display.setCursor(0, 56);
-  display.print(F("Bet-"));
+    display.setCursor(0, 56);
+    display.print(F("Bet-"));
 
-  display.setCursor(34, 56);
-  display.print(F("Bet+"));
+    display.setCursor(34, 56);
+    display.print(F("Bet+"));
 
-  display.setCursor(69, 56);
-  display.print(F("Stand"));
+    display.setCursor(69, 56);
+    display.print(F("Stand"));
 
-  display.setCursor(110, 56);
-  display.print(F("Hit"));
+    display.setCursor(110, 56);
+    display.print(F("Hit"));
 
-  display.drawLine(0, 52, 127, 52, WHITE);
+    display.drawLine(0, 52, 127, 52, WHITE);
 
-  display.display();
+    display.display();
 
-  while (digitalRead(pinA) != 0 && digitalRead(pinB) != 0 && digitalRead(pinC) != 0 && digitalRead(pinD) != 0) {
-    delay(20);
-  }
+    while (digitalRead(pinA) != 0 && digitalRead(pinB) != 0 && digitalRead(pinC) != 0 && digitalRead(pinD) != 0) {
+        delay(20);
+    }
 }
 
 
 void showGameOverScreen() {
-  display.clearDisplay();
+    display.clearDisplay();
 
-  display.setTextSize(2);
-  display.setCursor(12, 3);
-  display.print(F("Game Over"));
+    display.setTextSize(2);
+    display.setCursor(12, 3);
+    display.print(F("Game Over"));
 
-  display.setTextSize(1);
-  display.setCursor(17, 26);
-  display.print(F("Press any button"));
+    display.setTextSize(1);
+    display.setCursor(17, 26);
+    display.print(F("Press any button"));
 
-  display.setCursor(35, 36);
-  display.print(F("to restart"));
+    display.setCursor(35, 36);
+    display.print(F("to restart"));
 
-  display.setCursor(4, 56);
-  display.print(F("(c) 2025 Jeff Wollen"));
+    display.setCursor(4, 56);
+    display.print(F("(c) 2025 Jeff Wollen"));
 
-  display.display();
+    display.display();
 
-  while (digitalRead(pinA) != 0 && digitalRead(pinB) != 0 && digitalRead(pinC) != 0 && digitalRead(pinD) != 0) {
-    delay(20);
-  }
+    while (digitalRead(pinA) != 0 && digitalRead(pinB) != 0 && digitalRead(pinC) != 0 && digitalRead(pinD) != 0) {
+        delay(20);
+    }
 
-  bankroll.cash = 20;
+    bankroll.cash = 20;
 
-  bankroll.currentBet = 1;
+    bankroll.currentBet = 1;
 
-  drawStaticGraphics();
+    drawStaticGraphics();
 }
