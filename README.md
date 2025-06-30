@@ -8,7 +8,7 @@ I tried to make this project as compact and user-friendly as possible. It uses o
 
 Note that the [OLED panel](https://www.sunfounder.com/products/1-3-iic-i2c-serial-128x64-ssh1106-oled-display-module) uses the SH1106 display controller, which requires a different library than SSD1306 panels. You can download the library [here](https://github.com/wonho-maker/Adafruit_SH1106).
 
-Watch a longer [video demo](https://www.youtube.com/watch?v=gvHfX1EuN4g) on Youtube.
+Watch a longer [video demo](https://www.youtube.com/watch?v=IhNhChKepEs) on Youtube.
 
 ---
 
