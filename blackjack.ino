@@ -239,7 +239,7 @@ int Hand::getBestHandValue() {
     for (uint8_t a = 0; a < 6; ++a) {
         if (a == aceCount) {
             for (uint8_t i = 0; i < a + 1; ++i) {
-                possibleValues[i] = fixedTotal + a + (i * 10);
+                possibleValues[i] = fixedTotal + a + (10 * i);
             }
         }
     }
@@ -312,6 +312,9 @@ const unsigned char PROGMEM clubBitmap[] = {
     B00001111, B11110000,
     B00001111, B11110000
 };
+
+const char gameOverChars1[] PROGMEM = "Game";
+const char gameOverChars2[] PROGMEM = "Over";
 
 void setup() {
     pinMode(pinA, INPUT_PULLUP);
@@ -561,10 +564,10 @@ void drawStaticGraphics() {
 
     display.setTextSize(1);
     display.setCursor(0, 45);
-    display.print("Bet:");
+    display.print(F("Bet:"));
 
     display.setCursor(0, 56);
-    display.print("Bank:");
+    display.print(F("Bank:"));
 
     display.drawBitmap(112, 47, clubBitmap, 16, 16, WHITE);
 
@@ -604,7 +607,7 @@ void showBlackjackAlert(char side) {
     display.fillRect(x, 5, 18, 8, BLACK);
     display.setCursor(x, 5);
     display.setTextSize(1);
-    display.print("BJ!");
+    display.print(F("BJ!"));
     display.display();
 
     display.fillRect(dealerHand.cards[1]->x, 0, dealerHand.cards[1]->width, 1, BLACK);    // Clean up the top of dealer hole card rect.
@@ -624,7 +627,7 @@ void showDoubleDownAlert() {
     display.fillRect(33, 34, 12, 8, BLACK);
     display.setCursor(33, 34);
     display.setTextSize(1);
-    display.print("x2");
+    display.print(F("x2"));
     display.display();
 
     for (uint8_t i = 0; i < 23; ++i) {
@@ -690,29 +693,72 @@ void showTitleScreen() {
 void showGameOverScreen() {
     display.clearDisplay();
 
-    display.setTextSize(2);
-    display.setCursor(12, 3);
-    display.print(F("Game Over"));
+    for (uint8_t i = 0; i < 4; ++i) {
+        display.drawChar(12 + 12 * i, 3, pgm_read_byte(&gameOverChars1[i]), WHITE, BLACK, 2);
+        display.display();
+        delay(250);
+    }
+
+    for (uint8_t i = 0; i < 4; ++i) {
+        display.drawChar(72 + 12 * i, 3, pgm_read_byte(&gameOverChars2[i]), WHITE, BLACK, 2);
+        display.display();
+        delay(250);
+    }
 
     display.setTextSize(1);
-    display.setCursor(17, 26);
-    display.print(F("Press any button"));
-
-    display.setCursor(35, 36);
-    display.print(F("to restart"));
 
     display.setCursor(4, 56);
-    display.print(F("(c) 2025 Jeff Wollen"));
-
+    display.print(F("(c) 2025"));    // This is a joke.
     display.display();
+
+    delay(350);
+
+    display.setCursor(58, 56);
+    display.print(F("Jeff"));
+    display.display();
+
+    delay(350);
+
+    display.setCursor(88, 56);
+    display.print(F("Wollen"));
+    display.display();
+
+    delay(350);
+
+    uint16_t gameOverCounter = 0;
 
     while (digitalRead(pinA) != 0 && digitalRead(pinB) != 0 && digitalRead(pinC) != 0 && digitalRead(pinD) != 0) {
         delay(20);
+
+        if (gameOverCounter % 80 == 0) {
+            display.setTextColor(WHITE);
+        }
+        else if (gameOverCounter >= 120 && gameOverCounter % 40 == 0) {
+            display.setTextColor(BLACK);
+        }
+
+        if (gameOverCounter % 40 == 0) {
+            display.setCursor(17, 26);
+            display.print(F("Press any button"));
+
+            display.setCursor(35, 36);
+            display.print(F("to restart"));
+
+            display.display();
+        }
+
+        gameOverCounter += 1;
     }
 
     bankroll.cash = 20;
 
+    bankrollText.prevNum = -99;
+
     bankroll.currentBet = 1;
+
+    betText.prevNum = -99;
+
+    display.setTextColor(WHITE);
 
     drawStaticGraphics();
 }
