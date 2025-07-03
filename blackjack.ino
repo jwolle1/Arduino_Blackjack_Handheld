@@ -569,9 +569,9 @@ void playHand() {
         playerScore = 99;
     }
 
-    delay(1000);
-
     if (playerScore <= 21 && !dealerBlackjack) {
+        delay(1000);
+
         dealerCard2->flipDownCard();
 
         while (dealerHand.getBestHandValue() < 17 && dealerHand.cardsDealt <= 4) {
