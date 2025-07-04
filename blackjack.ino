@@ -1,5 +1,3 @@
-#include <SPI.h>
-#include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH1106.h>
 
@@ -364,8 +362,6 @@ void setup() {
     pinMode(pinB, INPUT_PULLUP);
     pinMode(pinC, INPUT_PULLUP);
     pinMode(pinD, INPUT_PULLUP);
-
-    Serial.begin(9600);
 
     display.begin(SH1106_SWITCHCAPVCC, 0x3C);
 
