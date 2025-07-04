@@ -333,6 +333,23 @@ const unsigned char PROGMEM clubBitmap[] = {
     B00001111, B11110000
 };
 
+const unsigned char PROGMEM alertBjBitmap[] = {
+    B00111111, B11111111, B11111100,
+    B01000000, B00000000, B00000010,
+    B01011111, B00000001, B10011010,
+    B01011111, B11000001, B10011010,
+    B01011000, B11000001, B10011010,
+    B01011000, B11000001, B10011010,
+    B01011111, B10000001, B10011010,
+    B01011111, B11000001, B10011010,
+    B01011000, B11000001, B10011010,
+    B01011000, B11011001, B10000010,
+    B01011111, B11011111, B10011010,
+    B01011111, B10011111, B00011010,
+    B01000000, B00000000, B00000010,
+    B00111111, B11111111, B11111100
+};
+
 const unsigned char PROGMEM titleBitmap[] {
     B00000000, B00000000, B00010000, B00000000, B00000000, B00000000, B00000100, B00000000, B00000000, B00000000, B00000000, B00000000, B00010000,
     B00000000, B00000000, B00110000, B00000000, B00000000, B00000000, B00011000, B00000000, B11100000, B00000000, B00000000, B00000000, B01100000,
@@ -641,13 +658,10 @@ void showBlackjackAlert(char side) {
         x = 2;
     }
     else {
-        x = 107;
+        x = 103;
     }
 
-    display.fillRect(x, 5, 18, 8, BLACK);
-    display.setCursor(x, 5);
-    display.setTextSize(1);
-    display.print(F("BJ!"));
+    display.drawBitmap(x, 5, alertBjBitmap, 24, 14, WHITE);
     display.display();
 
     display.fillRect(dealerHand.cards[1]->x, 0, dealerHand.cards[1]->width, 1, BLACK);    // Clean up the top of dealer hole card rect.
@@ -656,9 +670,9 @@ void showBlackjackAlert(char side) {
         drawCardGraphics();
     }
 
-    delay(500);
+    delay(800);
 
-    display.fillRect(x, 5, 18, 8, BLACK);
+    display.fillRect(x, 5, 24, 14, BLACK);
     display.display();
 }
 
