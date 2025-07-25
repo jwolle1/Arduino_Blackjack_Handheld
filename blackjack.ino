@@ -280,9 +280,9 @@ Hand dealerHand(dealerCard1, dealerCard2, dealerCard3, dealerCard4, dealerCard5)
 
 Bankroll bankroll;
 
-TextArea bankrollText(33, 56, 24, 8, 1);
+TextArea bankrollText(33, 56, 30, 8, 1);
 
-TextArea betText(33, 45, 24, 8, 1);
+TextArea betText(33, 45, 30, 8, 1);
 
 TextArea playerScoreText(45, 26, 12, 8, 1);
 
@@ -442,15 +442,13 @@ void setUpNewHand() {
 
     int betStepSize = 1;
 
-    if (bankroll.cash >= 250) {
-        betStepSize = 10;
-    }
-    else if (bankroll.cash >= 100) {
-        betStepSize = 5;
-    }
-    else if (bankroll.cash >= 50) {
-        betStepSize = 2;
-    }
+    if      (bankroll.cash >= 5000) { betStepSize = 200; }
+    else if (bankroll.cash >= 2500) { betStepSize = 100; }
+    else if (bankroll.cash >= 1000) { betStepSize =  50; }
+    else if (bankroll.cash >=  500) { betStepSize =  20; }
+    else if (bankroll.cash >=  250) { betStepSize =  10; }
+    else if (bankroll.cash >=  100) { betStepSize =   5; }
+    else if (bankroll.cash >=   50) { betStepSize =   2; }
 
     while (!playerHand.handActive) {
         if (digitalRead(pinA) == 0 && millis() - prevButtonPress > 250) {
