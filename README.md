@@ -27,7 +27,7 @@ Watch a longer [video demo](https://www.youtube.com/watch?v=bv6VOLqCWfE) on Yout
 
 ---
 
-I turned the project into a true handheld with a small lithium-ion battery and USB-C charging. It's a lot of fun. Overall dimensions are about 4-1/8 x 1-7/8 x 3/4 inches.
+I turned the project into a true handheld with a small LiPo battery and USB-C charging. It's a lot of fun. Overall dimensions are about 4-1/8 x 1-7/8 x 3/4 inches.
 
 <p align="center"><img src="images/AG130_front.jpg" alt="Front View" /></p>
 
